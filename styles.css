@@ -376,6 +376,101 @@ h3 {
 }
 
 
+/* ---------- PRICES ---------- */
+
+.prices {
+    background-color: var(--cream);
+    padding: 88px clamp(20px, 5vw, 64px);
+}
+
+.prices .container {
+    max-width: 1080px;
+}
+
+.price-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.price-tab {
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 2px solid var(--navy);
+    background-color: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+}
+
+.price-tab:hover {
+    background-color: var(--sky-pale);
+}
+
+.price-tab[aria-selected="true"] {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+.price-tab:focus-visible {
+    outline: 3px solid var(--sun);
+    outline-offset: 2px;
+}
+
+.price-panel {
+    background-color: var(--white);
+    border-radius: 24px;
+    padding: clamp(24px, 4vw, 40px);
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+    gap: 32px 48px;
+    align-items: start;
+}
+
+.price-group h3 {
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--sky-border);
+    font-size: 16px;
+}
+
+.price-row:last-child {
+    border-bottom: none;
+}
+
+.price-row span:first-child {
+    color: var(--body-text);
+}
+
+.price-row span:last-child {
+    font-weight: 800;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.price-note {
+    margin: 24px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--body-text);
+}
+
+
 /* ---------- LOCATIONS (list layout from Option C) ---------- */
 
 .locations {
@@ -610,6 +705,7 @@ h3 {
     }
 
     .services,
+    .prices,
     .locations,
     .why-us,
     .about,
