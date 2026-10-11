@@ -1,39 +1,56 @@
 // Opens index.html in a pretend browser (jsdom) and checks the page's
-// JavaScript works: the announcement banner fills in and every price
-// category shows prices in the right format.
+// JavaScript works: the announcement banner fills in (or stays empty when
+// there are no announcements) and every price category shows prices in the
+// right format.
 // Run it yourself with:  npm install --no-save jsdom  then  node tests/check_page.mjs
 
 import { JSDOM, VirtualConsole } from "jsdom";
 import { readFileSync } from "node:fs";
 
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-
 const errors = [];
-const virtualConsole = new VirtualConsole();
-virtualConsole.on("jsdomError", error => errors.push("JavaScript error: " + error.message));
 
-const dom = new JSDOM(html, {
-    runScripts: "dangerously",
-    virtualConsole,
-    beforeParse(window) {
-        // Pretend the backend answered with one announcement
-        window.fetch = () => Promise.resolve({
-            json: () => Promise.resolve([{ message: "Test announcement" }]),
-        });
-    },
-});
+// Load the page, pretending the backend answered with `announcements`
+async function loadPage(announcements) {
+    const virtualConsole = new VirtualConsole();
+    virtualConsole.on("jsdomError", error => errors.push("JavaScript error: " + error.message));
 
-// Give the pretend fetch a moment to finish
-await new Promise(resolve => setTimeout(resolve, 200));
+    const dom = new JSDOM(html, {
+        runScripts: "dangerously",
+        virtualConsole,
+        beforeParse(window) {
+            window.fetch = () => Promise.resolve({
+                json: () => Promise.resolve(announcements),
+            });
+        },
+    });
 
-const document = dom.window.document;
+    // Give the pretend fetch a moment to finish
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return dom.window.document;
+}
 
-const banner = document.getElementById("announcement-banner");
+
+// ---------- Announcement banner ----------
+
+// With an announcement: the banner shows it
+let document = await loadPage([{ message: "Test announcement" }]);
+let banner = document.getElementById("announcement-banner");
 if (!banner) {
     errors.push("The announcement banner (#announcement-banner) is missing.");
 } else if (banner.textContent !== "Test announcement") {
     errors.push("The announcement banner did not fill in from the backend's answer.");
 }
+
+// With no announcements: the banner stays empty, so CSS (:empty) hides it
+const emptyPage = await loadPage([]);
+const emptyBanner = emptyPage.getElementById("announcement-banner");
+if (emptyBanner && emptyBanner.textContent !== "") {
+    errors.push("With no announcements, the banner should stay empty (hidden), but it shows: \"" + emptyBanner.textContent + "\"");
+}
+
+
+// ---------- Price list ----------
 
 const tabs = [...document.querySelectorAll(".price-tab")];
 if (tabs.length === 0) {
@@ -57,10 +74,11 @@ for (const tab of tabs) {
     totalRows += rows.length;
 }
 
+
 if (errors.length > 0) {
     console.log("Problems found:");
     errors.forEach(error => console.log("  - " + error));
     process.exit(1);
 }
 
-console.log(`OK: banner works, ${tabs.length} price categories, ${totalRows} prices checked.`);
+console.log(`OK: banner works with and without announcements, ${tabs.length} price categories, ${totalRows} prices checked.`);
