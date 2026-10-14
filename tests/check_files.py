@@ -1,11 +1,11 @@
 """
-Checks the website files before they go live.
+Checks every page of the website (index.html, prices.html, ...) before it goes live.
 Run it yourself with:  python tests/check_files.py
 
 It looks for:
   - HTML tags that were opened but never closed (or closed in the wrong order)
   - the same id used twice
-  - links to sections (#something) that don't exist on the page
+  - links to sections (#something or page.html#something) that don't exist
   - images, CSS files or other files that are linked but missing,
     including wrong capital letters (GitHub Pages is case-sensitive)
 """
@@ -86,28 +86,42 @@ def is_local(url):
     return not re.match(r"^(https?:|mailto:|tel:|data:|//)", url)
 
 
-def main():
+def check_page(name):
+    """Returns (errors, checker) for one HTML page."""
     errors = []
-
-    html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = (ROOT / name).read_text(encoding="utf-8")
     checker = PageChecker()
     checker.feed(html)
     checker.close()
-    errors += checker.errors
+    errors += [f"{name} {error}" for error in checker.errors]
     for tag, line in checker.open_tags:
         if tag not in OPTIONAL_CLOSE:
-            errors.append(f"line {line}: <{tag}> is never closed")
+            errors.append(f"{name} line {line}: <{tag}> is never closed")
+    return errors, checker
 
-    for url, line in checker.links:
-        if not is_local(url):
-            continue
-        if url.startswith("#"):
-            if url != "#" and url[1:] not in checker.ids:
-                errors.append(f"index.html line {line}: link to {url} but no element has id=\"{url[1:]}\"")
-        else:
-            path = url.split("#")[0].split("?")[0]
+
+def main():
+    errors = []
+    pages = sorted(path.name for path in ROOT.glob("*.html"))
+    checkers = {}
+    for name in pages:
+        page_errors, checkers[name] = check_page(name)
+        errors += page_errors
+
+    total_links = 0
+    for name, checker in checkers.items():
+        for url, line in checker.links:
+            if not is_local(url):
+                continue
+            total_links += 1
+            path, _, section = url.partition("#")
+            path = path.split("?")[0]
+            target = path or name          # "#about" means this same page
             if path and not file_exists_exact_case(path):
-                errors.append(f"index.html line {line}: \"{path}\" is missing (check the spelling and capital letters)")
+                errors.append(f"{name} line {line}: \"{path}\" is missing (check the spelling and capital letters)")
+                continue
+            if section and target in checkers and section not in checkers[target].ids:
+                errors.append(f"{name} line {line}: link to {url} but {target} has no element with id=\"{section}\"")
 
     css = (ROOT / "styles.css").read_text(encoding="utf-8")
     for number, text in enumerate(css.splitlines(), start=1):
@@ -121,7 +135,7 @@ def main():
             print("  - " + error)
         sys.exit(1)
 
-    print(f"OK: tags balanced, {len(checker.ids)} ids, {len(checker.links)} links and images checked.")
+    print(f"OK: {len(pages)} pages ({', '.join(pages)}), tags balanced, {total_links} links and images checked.")
 
 
 if __name__ == "__main__":

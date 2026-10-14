@@ -153,6 +153,12 @@ h3 {
     text-decoration: none;
 }
 
+.main-nav a[aria-current="page"] {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+}
+
 .main-nav .nav-cta {
     background-color: var(--navy);
     color: var(--white);

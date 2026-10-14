@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Starting prices for dry cleaning, laundry, household items and specialty cleaning at Sunny's Dry Cleaners in Charlotte, NC.">
+
+    <title>Prices | Sunny's Dry Cleaners</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Sun emoji as the little icon in the browser tab -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+</head>
+
+<body>
+
+    <!-- ---------- HEADER ---------- -->
+    <header class="site-header">
+        <a href="index.html" class="logo-link">
+            <img src="logo.png" alt="Sunny's Dry Cleaners" class="logo">
+        </a>
+
+        <nav class="main-nav" aria-label="Main">
+            <a href="index.html#services">Services</a>
+            <a href="prices.html" aria-current="page">Prices</a>
+            <a href="index.html#locations">Locations</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="index.html#delivery" class="nav-cta">Schedule a pickup</a>
+        </nav>
+    </header>
+
+    <!-- Filled in by the script at the bottom; hidden when empty -->
+    <div id="announcement-banner"></div>
+
+
+    <main>
+
+        <!-- ---------- PRICES ---------- -->
+        <section class="prices" id="prices">
+            <div class="container">
+
+                <h1 class="section-title">Prices</h1>
+                <p class="section-subtitle">Starting prices for our most requested items.</p>
+
+                <!-- The category buttons and price rows are built by the script at the
+                     bottom of this file. To change a price, edit PRICE_LIST there. -->
+                <div class="price-tabs" role="tablist" aria-label="Price categories"></div>
+                <div class="price-panel" id="price-panel" role="tabpanel"></div>
+
+                <p class="price-note">
+                    Prices shown are starting prices and are subject to change. The final
+                    price may vary based on fabric, material, size, trim, stains or special
+                    care needs.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ---------- FOOTER ---------- -->
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <img src="logo.png" alt="Sunny's Dry Cleaners" class="footer-logo">
+
+            <nav class="footer-nav" aria-label="Footer">
+                <a href="index.html#services">Services</a>
+                <a href="prices.html">Prices</a>
+                <a href="index.html#delivery">Pickup &amp; delivery</a>
+                <a href="index.html#locations">Locations</a>
+                <a href="index.html#about">About</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+
+            <p class="copyright">© 2026 Sunny's Dry Cleaners</p>
+        </div>
+    </footer>
+
+
+    <script>
+        // Where the backend lives. When it goes live, change this one line.
+        const API_URL = "https://sunnys-backend.onrender.com";
+
+        fetch(API_URL + "/api/announcements")
+            .then(response => response.json())
+            .then(announcements => {
+                if (announcements.length > 0) {
+                    document.getElementById("announcement-banner").textContent = announcements[0].message;
+                }
+            })
+            .catch(() => {});
+
+
+
+        // ---------- PRICE LIST ----------
+        // To change a price, edit it here. Each item is ["Name", "price"].
+        const PRICE_LIST = [
+            { tab: "Dry cleaning", groups: [
+                { title: "Shirts & tops", items: [
+                    ["Dress shirt", "8.99"],
+                    ["Polo", "7.49"],
+                    ["T-shirt", "5.99"],
+                    ["Blouse", "8.99"],
+                    ["Sheer or beaded blouse", "8.99"],
+                    ["Bodysuit", "8.99"],
+                ] },
+                { title: "Pants & skirts", items: [
+                    ["Pants, jeans or leggings", "8.99"],
+                    ["Shorts", "7.99"],
+                    ["Skirt", "8.99"],
+                    ["Long skirt", "8.99"],
+                    ["Pleated skirt", "10.79"],
+                ] },
+                { title: "Suits & jackets", items: [
+                    ["Suit jacket or blazer", "9.99"],
+                    ["Suit pants", "8.99"],
+                    ["Suit skirt", "8.99"],
+                    ["Suit vest", "6.79"],
+                    ["Jacket or jean jacket", "9.99"],
+                    ["Vest", "7.49"],
+                    ["Down vest", "15.29"],
+                ] },
+                { title: "Dresses & more", items: [
+                    ["Dress", "17.49"],
+                    ["Long dress", "18.49"],
+                    ["Beaded or sequin dress", "18.49"],
+                    ["Formal dress", "21.99"],
+                    ["Jumpsuit or romper", "17.49"],
+                    ["Robe", "17.49"],
+                    ["Choir or graduation robe", "17.49"],
+                    ["Slip", "10.49"],
+                ] },
+                { title: "Sweaters", items: [
+                    ["Sweater or cardigan", "9.99"],
+                    ["Long sweater", "9.99"],
+                    ["Beaded or sequin sweater", "9.99"],
+                ] },
+                { title: "Coats & winter", items: [
+                    ["Full-length coat", "20.99"],
+                    ["3/4-length coat", "18.99"],
+                    ["Down coat", "20.99"],
+                    ["Raincoat", "16.99"],
+                    ["Windbreaker", "10.99"],
+                    ["Zip-out lining", "4.99"],
+                    ["Ski pants", "10.99"],
+                    ["Ski gloves or hat", "5.99"],
+                ] },
+                { title: "Accessories", items: [
+                    ["Tie", "4.79"],
+                    ["Bow tie", "3.99"],
+                    ["Cummerbund", "4.99"],
+                    ["Scarf", "6.69"],
+                    ["Shawl", "7.49"],
+                    ["Gloves", "4.49"],
+                    ["Hat", "8.49"],
+                    ["Baseball cap", "4.99"],
+                    ["Handkerchief", "2.49"],
+                    ["Purse", "14.49"],
+                ] },
+            ] },
+            { tab: "Laundered shirts", groups: [
+                { title: "Shirts", items: [
+                    ["Button-down shirt", "3.49"],
+                    ["Tuxedo shirt", "4.49"],
+                    ["Hand-pressed shirt", "8.99"],
+                    ["Laundered blouse", "8.99"],
+                ] },
+                { title: "Uniforms", items: [
+                    ["Lab coat", "6.49"],
+                    ["Chef coat", "6.49"],
+                    ["Apron", "6.49"],
+                ] },
+            ] },
+            { tab: "Wash & fold", groups: [
+                { title: "Wash & fold", items: [
+                    ["Everyday laundry, per lb", "3.49"],
+                    ["Household items, per lb", "5.99"],
+                ] },
+            ] },
+            { tab: "Household", groups: [
+                { title: "Bedding", items: [
+                    ["Comforter, any size", "56.99"],
+                    ["Bedspread, any size", "48.99"],
+                    ["Duvet cover", "38.99"],
+                    ["Blanket, any size", "38.99"],
+                    ["Throw blanket", "28.99"],
+                    ["Baby blanket", "14.99"],
+                    ["Bed skirt", "38.99"],
+                    ["Mattress pad", "38.99"],
+                    ["Feather bed", "53.99"],
+                    ["Sheet", "15.49"],
+                    ["Pillowcase", "6.49"],
+                    ["Pillow sham", "7.49"],
+                    ["Pillow, standard", "20.99"],
+                    ["Pillow, king", "24.99"],
+                    ["Sleeping bag", "27.99"],
+                    ["Bath mat", "14.99"],
+                ] },
+                { title: "Table linens", items: [
+                    ["Table runner", "13.99"],
+                    ["Tablecloth, small", "16.49"],
+                    ["Tablecloth, medium", "20.49"],
+                    ["Tablecloth, large", "25.49"],
+                ] },
+                { title: "Drapes", items: [
+                    ["Lined, per panel", "21.00"],
+                    ["Unlined, per panel", "17.00"],
+                    ["Sheer, per panel", "17.00"],
+                    ["Lined, per pleat", "2.25"],
+                    ["Unlined or sheer, per pleat", "1.95"],
+                    ["Tie-backs, per panel", "2.00"],
+                ] },
+            ] },
+            { tab: "Specialty", groups: [
+                { title: "Leather & suede", items: [
+                    ["Jacket, waist length", "70.99"],
+                    ["Jacket, 3/4 length", "71.99"],
+                    ["Coat, full length", "78.99"],
+                    ["Shearling jacket", "98.99"],
+                    ["Dress or jumpsuit", "78.99"],
+                    ["Blouse or shorts", "70.99"],
+                    ["Pants", "71.99"],
+                    ["Mini skirt", "70.99"],
+                    ["Skirt", "71.99"],
+                    ["Vest", "68.99"],
+                ] },
+                { title: "Fur", items: [
+                    ["Collar", "43.99"],
+                    ["Stole", "48.99"],
+                    ["Jacket, waist length", "68.99"],
+                    ["Jacket, thigh length", "98.99"],
+                    ["Jacket, knee length", "118.99"],
+                    ["Coat, full length", "148.99"],
+                    ["Coat with fur collar", "58.99"],
+                ] },
+                { title: "Wedding gowns", items: [
+                    ["Gown cleaning", "218.99"],
+                    ["Gown cleaning and preservation box", "318.00"],
+                ] },
+            ] },
+        ];
+
+        const priceTabs = document.querySelector(".price-tabs");
+        const pricePanel = document.getElementById("price-panel");
+
+        function showPrices(index) {
+            pricePanel.innerHTML = "";
+
+            PRICE_LIST[index].groups.forEach(group => {
+                const box = document.createElement("div");
+                box.className = "price-group";
+
+                const heading = document.createElement("h3");
+                heading.textContent = group.title;
+                box.appendChild(heading);
+
+                group.items.forEach(([name, price]) => {
+                    const row = document.createElement("p");
+                    row.className = "price-row";
+
+                    const nameSpan = document.createElement("span");
+                    nameSpan.textContent = name;
+                    const priceSpan = document.createElement("span");
+                    priceSpan.textContent = "$" + price;
+
+                    row.append(nameSpan, priceSpan);
+                    box.appendChild(row);
+                });
+
+                pricePanel.appendChild(box);
+            });
+
+            // Highlight the button for the category being shown
+            priceTabs.querySelectorAll("button").forEach((button, i) => {
+                button.setAttribute("aria-selected", i === index ? "true" : "false");
+            });
+        }
+
+        PRICE_LIST.forEach((category, i) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "price-tab";
+            button.setAttribute("role", "tab");
+            button.textContent = category.tab;
+            button.addEventListener("click", () => showPrices(i));
+            priceTabs.appendChild(button);
+        });
+
+        showPrices(0);
+    </script>
+
+</body>
+</html>
